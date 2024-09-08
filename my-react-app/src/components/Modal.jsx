@@ -3,11 +3,13 @@ import { useState } from "react"
 const Modal= ({mode,setShowModal, getData, task})=> {
   const editMode= mode ==='edit'?true : false
 //1:29:00
-  const[data,setData]=useState({
+//change data to nowData
+//the changes work but it doesnt print
+  const[nowData,setData]=useState({
     user_email:editMode?task.user_email:'me@me.com',
     title:editMode?task.title:null,
-    progress:editMode?task.progress:null,
-    date: editMode ?"":new Date()
+    progress:editMode?task.progress:0,
+    date: editMode ?task.data:new Date()
   })
 
   const postData = async (e) =>{
@@ -16,7 +18,7 @@ const Modal= ({mode,setShowModal, getData, task})=> {
       const response = await fetch('http://localhost:8000/todos',{
         method:"POST",
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(data)
+        body:JSON.stringify(nowData)
       })
       if(response.status===200){
         console.log('WORKED')
@@ -29,15 +31,34 @@ const Modal= ({mode,setShowModal, getData, task})=> {
     }
   }
 
+
+  const editData= async(e)=>{
+    e.preventDefault()
+    try {
+      const response=await fetch(`http://localhost:8000/todos/${task.id}`,{
+        method:"PUT",
+        ///errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(nowData)
+      })
+      if(response.status===200){
+        setShowModal(false)
+        getData()
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const handlechange = (e)=>{
     console.log('Changing',e)
     const {name, value} = e.target
-    setData(data =>({
-      ...data,
-      [name]: value
+    setData(nowData =>({
+      ...nowData,
+      [name]: value,
     }))
 
-    console.log(data);
+    console.log(nowData);
     
   }
   
@@ -56,7 +77,7 @@ const Modal= ({mode,setShowModal, getData, task})=> {
           maxLength={30}
           placeholder="Your Task goes here"
           name="title"
-          value={data.title}
+          value={nowData.title}
           onChange={handlechange}
           />
           <br/>
@@ -68,11 +89,11 @@ const Modal= ({mode,setShowModal, getData, task})=> {
           min='0'
           max='100'
           name="progress"
-          value={data.progress}
+          value={nowData.progress || 0}
           onChange={handlechange}
           />
           <input 
-          className={mode} type="submit" onClick={editMode?'':postData}
+          className={mode} type="submit" onClick={editMode?editData:postData}
           />
         </form>
         </div>
