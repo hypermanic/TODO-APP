@@ -15,7 +15,7 @@ const Modal= ({mode,setShowModal, getData, task})=> {
   const postData = async (e) =>{
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:8000/todos',{
+      const response = await fetch(`${import.meta.env.VITE_APP_SERVERURL}/todos`,{
         method:"POST",
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(nowData)
@@ -35,7 +35,7 @@ const Modal= ({mode,setShowModal, getData, task})=> {
   const editData= async(e)=>{
     e.preventDefault()
     try {
-      const response=await fetch(`http://localhost:8000/todos/${task.id}`,{
+      const response=await fetch(`${import.meta.env.VITE_APP_SERVERURL}/todos/${task.id}`,{
         method:"PUT",
         ///errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
         headers:{'Content-Type':'application/json'},
