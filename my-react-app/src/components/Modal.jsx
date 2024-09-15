@@ -1,12 +1,14 @@
 import { useState } from "react"
+import { useCookies } from "react-cookie"
 
 const Modal= ({mode,setShowModal, getData, task})=> {
+  const [cookies,setCookie,removeCookie]=useCookies(null)
   const editMode= mode ==='edit'?true : false
 //1:29:00
 //change data to nowData
 //the changes work but it doesnt print
   const[nowData,setData]=useState({
-    user_email:editMode?task.user_email:'me@me.com',
+    user_email:editMode?task.user_email:cookies.Email,
     title:editMode?task.title:null,
     progress:editMode?task.progress:0,
     date: editMode ?task.data:new Date()
